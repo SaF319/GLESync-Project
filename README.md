@@ -1,1 +1,1 @@
-# GELSync-Project
+# GLESync-Project
