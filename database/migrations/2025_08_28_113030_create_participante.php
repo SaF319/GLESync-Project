@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('participante', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->foreign('email')->references('email')->on('usuarios');
+        Schema::create('participantes', function (Blueprint $table) {
+            $table->string('email');           // columna email
             $table->timestamps();
+
+            $table->primary('email');          // declaramos PK
+            $table->foreign('email')           // declaramos FK
+                    ->references('email')
+                    ->on('usuarios')
+                    ->onDelete('cascade');      // opcional: borrar participante si se borra usuario
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('participante');
+        Schema::dropIfExists('participantes');
     }
 };

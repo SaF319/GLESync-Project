@@ -6,25 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('evento', function (Blueprint $table) {
-            $table->bigIncrements('id_evento');
-            $table->string('titulo', 200)->notNull();
-            $table->geometry('ubicacion');
+        Schema::create('eventos', function (Blueprint $table) {
+            $table->bigIncrements('id_evento'); // PK auto-incremental
+            $table->string('titulo', 200);      // obligatorio por defecto
+            $table->geometry('ubicacion');      // asegúrate de que MySQL lo soporte
             $table->mediumText('descripcion');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('evento');
+        Schema::dropIfExists('eventos');
     }
 };

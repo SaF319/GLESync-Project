@@ -6,37 +6,46 @@
         <h2 class="text-center mb-4">Crear cuenta en Planazo 🎵</h2>
         <div class="card shadow-sm">
             <div class="card-body">
-                <form>
+
+                {{-- Mensajes de error --}}
+                @if($errors->any())
+                    @foreach($errors->all() as $error)
+                        <p style="color:red;">{{ $error }}</p>
+                    @endforeach
+                @endif
+
+                {{-- Mensaje de éxito --}}
+                @if(session('success'))
+                    <p style="color:green;">{{ session('success') }}</p>
+                @endif
+
+                {{-- Formulario de Registro --}}
+                <form action="{{ route('register.process') }}" method="POST">
+                    @csrf
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre completo</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
+                        <label for="name" class="form-label">Nombre completo</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Tu nombre" required>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control" id="email" placeholder="tu@correo.com">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="tu@correo.com" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" placeholder="••••••••">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="••••••••" required>
                     </div>
                     <div class="mb-3">
                         <label for="password_confirmation" class="form-label">Confirmar contraseña</label>
-                        <input type="password" class="form-control" id="password_confirmation" placeholder="••••••••">
+                        <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="••••••••" required>
                     </div>
                     <button type="submit" class="btn btn-dark w-100">Registrarse</button>
                 </form>
 
-                <hr>
-
-                <div class="d-grid gap-2">
-                    <button class="btn btn-google">Registrarse con Google</button>
-                    <button class="btn btn-facebook">Registrarse con Facebook</button>
-                </div>
-
                 <div class="mt-3 text-center">
-                    <small>¿Ya tienes cuenta? <a href="{{ url('/login') }}">Inicia sesión aquí</a></small>
+                    <small>¿Ya tienes cuenta? <a href="{{ url('/login') }}">Inicia sesión</a></small>
                 </div>
 
+                {{-- Botón volver a home --}}
                 <div class="mt-3 text-center">
                     <a href="{{ url('/') }}" class="btn btn-outline-dark w-50">Volver a Home</a>
                 </div>
@@ -44,23 +53,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.btn-google {
-    background-color: #db4437;
-    color: white;
-}
-.btn-google:hover {
-    background-color: #c33d30;
-    color: white;
-}
-.btn-facebook {
-    background-color: #1877f2;
-    color: white;
-}
-.btn-facebook:hover {
-    background-color: #145dbf;
-    color: white;
-}
-</style>
 @endsection

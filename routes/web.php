@@ -1,13 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-/*
-Route::get('/', function () {
-    return view('home');
-});
-*/
-
+// Página de inicio
 Route::get('/', function () {
     $eventos = [
         [
@@ -31,14 +27,34 @@ Route::get('/', function () {
     ];
 
     return view('home', compact('eventos'));
-});
+})->name('home');
 
-// Ruta para mostrar login
+// 🔹 Rutas de autenticación
+
+// Login
 Route::get('/login', function () {
     return view('login');
-});
+})->name('login.form')->middleware('guest'); // solo para no logueados
 
-// Ruta para mostrar login
+Route::post('/login', [AuthController::class, 'validacion'])
+    ->name('login.process')
+    ->middleware('guest');
+
+// Registro
 Route::get('/registro', function () {
     return view('registro');
-});
+})->name('register.form')->middleware('guest');
+
+Route::post('/registro', [AuthController::class, 'registro'])
+    ->name('register.process')
+    ->middleware('guest');
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth'); // solo usuarios autenticados
+
+// Dashboard
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard')->middleware('auth'); // solo usuarios autenticados
