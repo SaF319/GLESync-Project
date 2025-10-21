@@ -4,8 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-
-
 return new class extends Migration
 {
     public function up(): void
@@ -16,15 +14,13 @@ return new class extends Migration
             $table->decimal('latitud', 10, 7)->nullable(); // Alternativa a geometry
             $table->decimal('longitud', 10, 7)->nullable(); // Alternativa a geometry
             $table->mediumText('descripcion');
-            $table->unsignedBigInteger('organizador_id'); // Relación con organizadores
+            $table->unsignedBigInteger('organizador_id')->nullable(); // Ahora puede ser null
             $table->timestamps();
 
             $table->foreign('organizador_id')
                     ->references('id')
                     ->on('organizadores')
                     ->onDelete('cascade');
-
-
         });
     }
 

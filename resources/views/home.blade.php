@@ -42,6 +42,49 @@
         </button>
     </div>
 
+
+    {{-- Barra de búsqueda --}}
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body py-4">
+                <h5 class="card-title text-center mb-3">🔍 Buscar Eventos</h5>
+                <form action="{{ route('home.buscar') }}" method="GET">
+                    <div class="input-group input-group-lg">
+                        <input type="text"
+                                name="q"
+                                class="form-control"
+                                placeholder="Buscar eventos por nombre, descripción..."
+                                value="{{ old('q') }}"
+                                required>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i> Buscar
+                        </button>
+                    </div>
+                    @error('q')
+                        <div class="text-danger mt-2 text-center">{{ $message }}</div>
+                    @enderror
+                </form>
+                @auth
+                    <div class="text-center mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            Buscarás solo en tus eventos organizados
+                        </small>
+                    </div>
+                @else
+                    <div class="text-center mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            Búsqueda en todos los eventos públicos
+                        </small>
+                    </div>
+                @endauth
+            </div>
+        </div>
+    </div>
+</div>
+
     {{-- Últimos eventos destacados --}}
     <h2 class="mb-4">Eventos destacados</h2>
     <div class="row">

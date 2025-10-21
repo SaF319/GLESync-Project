@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
         CategoriasSeeder::class,
         ]);
+
+        $this->call(EventosDefaultSeeder::class);
     }
 }

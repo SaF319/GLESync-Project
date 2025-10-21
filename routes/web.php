@@ -70,3 +70,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/organizador/hacerse', [EventoController::class, 'hacerseOrganizador'])
         ->name('organizador.hacerse');
 });
+
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/buscar', [HomeController::class, 'buscar'])->name('home.buscar');
+
+Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
+Route::get('/eventos/{id}', [EventoController::class, 'show'])->name('eventos.show');

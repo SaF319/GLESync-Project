@@ -7,6 +7,8 @@ return new class extends Migration
 {
     public function up(): void
     {
+        DB::unprepared('DROP PROCEDURE IF EXISTS crear_evento');
+
         DB::unprepared('
             CREATE PROCEDURE crear_evento(
                 IN p_titulo VARCHAR(200),
@@ -17,14 +19,11 @@ return new class extends Migration
                 IN p_organizador_id BIGINT
             )
             BEGIN
-                -- Insertamos en eventos
                 INSERT INTO eventos (titulo, latitud, longitud, descripcion, organizador_id, created_at, updated_at)
                 VALUES (p_titulo, p_latitud, p_longitud, p_descripcion, p_organizador_id, NOW(), NOW());
 
-                -- Guardamos el ID del evento creado
                 SET @last_evento_id = LAST_INSERT_ID();
 
-                -- Insertamos en fechas_horas
                 INSERT INTO fechas_horas (evento_id, fecha_hora, created_at, updated_at)
                 VALUES (@last_evento_id, p_fechaHora, NOW(), NOW());
             END

@@ -10,13 +10,13 @@ class DashboardController extends Controller
     {
         $usuario = Auth::user();
 
-        // Si el usuario tiene organizador, traemos sus eventos con relaciones
+
         if ($usuario->organizador) {
             $eventos = $usuario->organizador->eventos()
                 ->with(['categorias', 'fechasHoras', 'imagen'])
                 ->get();
         } else {
-            $eventos = collect(); // colección vacía si no es organizador
+            $eventos = collect();
         }
 
         return view('dashboard', compact('eventos'));
