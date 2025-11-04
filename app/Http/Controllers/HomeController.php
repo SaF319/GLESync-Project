@@ -18,6 +18,7 @@ class HomeController extends Controller
             ->get()
             ->map(function ($evento) {
                 return [
+                    'id' => $evento->id,
                     'titulo' => $evento->titulo,
                     'descripcion' => $evento->descripcion,
                     'estado' => $evento->fechasHoras->first() && $evento->fechasHoras->first()->fecha_hora > now()
@@ -35,6 +36,7 @@ class HomeController extends Controller
             ->get()
             ->map(function ($evento) {
                 return [
+                    'id' => $evento->id,
                     'titulo' => $evento->titulo,
                     'descripcion' => $evento->descripcion,
                     'estado' => $evento->fechasHoras->first() && $evento->fechasHoras->first()->fecha_hora > now()
@@ -83,7 +85,7 @@ class HomeController extends Controller
         // SIEMPRE buscar en todos los eventos, sin importar si está autenticado
         $eventosResultados = Evento::where(function($query) use ($searchTerm) {
             $query->where('titulo', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('descripcion', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('descripcion', 'LIKE', "%{$searchTerm}%");
         })
         ->with(['categorias', 'fechasHoras', 'imagen'])
         ->get()

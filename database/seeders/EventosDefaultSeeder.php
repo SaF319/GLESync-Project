@@ -3,13 +3,34 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Usuarios;
+use App\Models\Organizador;
 use App\Models\Evento;
 use App\Models\Imagen;
+use Illuminate\Support\Facades\Hash;
 
 class EventosDefaultSeeder extends Seeder
 {
     public function run(): void
     {
+        // 🧩 1️⃣ Crear usuario por defecto
+        $usuario = Usuarios::firstOrCreate(
+            ['email' => 'organizador@planazo.com'],
+            [
+                'nombre' => 'Organizador Planazo',
+                'password' => Hash::make('12345678'),
+            ]
+        );
+
+        // 🧩 2️⃣ Crear organizador vinculado a este usuario
+        $organizador = Organizador::firstOrCreate(
+            ['usuario_id' => $usuario->id],
+            [
+                'contacto' => '099123456', // o cualquier info de contacto
+            ]
+        );
+
+        // 🧩 3️⃣ Lista de eventos base
         $eventosDefault = [
             [
                 'titulo' => 'Recital de Rock',
@@ -37,24 +58,28 @@ class EventosDefaultSeeder extends Seeder
             ],
         ];
 
+        // 🧩 4️⃣ Crear eventos + imágenes
         foreach ($eventosDefault as $data) {
-            // Crea el evento solo si no existe (usa título como referencia)
             $evento = Evento::firstOrCreate(
                 ['titulo' => $data['titulo']],
                 [
-                    'descripcion'    => $data['descripcion'],
-                    'organizador_id' => null, // o algún valor por defecto si querés
+                    'descripcion' => $data['descripcion'],
+                    'organizador_id' => $organizador->id,
                 ]
             );
 
-            // ✅ Verificamos si ya tiene una imagen asociada
+            // Asociar imagen solo si no existe
             if (!$evento->imagen) {
-                Imagen::create([
-                    'evento_id' => $evento->id,
-                    'nombre'    => $data['imagen']['nombre'],
-                    'ruta'      => $data['imagen']['ruta'],
-                ]);
+                Imagen::firstOrCreate(
+                    ['evento_id' => $evento->id],
+                    [
+                        'nombre' => $data['imagen']['nombre'],
+                        'ruta' => $data['imagen']['ruta'],
+                    ]
+                );
             }
         }
+
+        $this->command->info('✅ Usuario, organizador, eventos e imágenes creados correctamente.');
     }
 }

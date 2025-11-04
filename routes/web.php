@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ComentarioController;
 
 // Página de inicio
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -56,6 +57,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth');
 
 
+
+    Route::post('/comentario', [ComentarioController::class, 'store'])->name('comentario.store');
+    Route::get('/eventos/{evento}/comentarios', [ComentarioController::class, 'index'])
+    ->name('comentarios.index');
     /*
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -75,5 +80,6 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/buscar', [HomeController::class, 'buscar'])->name('home.buscar');
 
-Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
-Route::get('/eventos/{id}', [EventoController::class, 'show'])->name('eventos.show');
+Route::get('/eventos', [EventoController::class, 'index']);
+Route::get('/eventos/{id}', [EventoController::class, 'show']);
+

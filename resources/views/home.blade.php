@@ -101,7 +101,7 @@
                     </div>
                     <div class="card-footer text-end">
                         {{-- Como no hay BD aún, se deja el enlace vacío o # --}}
-                        <a href="#" class="btn btn-sm btn-dark">Ver más</a>
+                        <a href="{{ route('eventos.show', $evento['id']) }}" class="btn btn-sm btn-dark">Ver más</a>
                     </div>
                 </div>
             </div>

@@ -136,12 +136,15 @@ class EventoController extends Controller
         $usuario = Auth::user();
         $organizador = $usuario->organizador;
 
-        $evento = Evento::with(['categorias', 'fechasHoras', 'imagen'])
+        $evento = Evento::findOrFail($id);
+        $comentarios = $evento->comentarios;
+
+        $evento = Evento::with(['comentarios.usuario', 'categorias', 'fechasHoras', 'imagen'])
             ->where('id', $id)
             ->where('organizador_id', $organizador->id)
             ->firstOrFail();
 
-        return view('eventos.show', compact('evento'));
+        return view('eventos.show', compact('evento', 'comentarios'));
     }
 
     /**
