@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="container py-4">
-    <!-- Barra de búsqueda -->
     <div class="row mb-4">
         <div class="col-md-8">
             <form action="{{ route('home.buscar') }}" method="GET">
@@ -28,7 +27,6 @@
         </div>
     </div>
 
-    <!-- Información de búsqueda -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="alert alert-info">
@@ -48,7 +46,6 @@
         </div>
     </div>
 
-    <!-- Resultados -->
     @if($eventos->isEmpty())
         <div class="row">
             <div class="col-12">
@@ -98,7 +95,6 @@
                                 {{ Str::limit(is_array($evento) ? $evento['descripcion'] : $evento->descripcion, 100) }}
                             </p>
 
-                            <!-- Información adicional -->
                             <div class="evento-info">
                                 @if(isset($evento->fechas_evento) || (is_array($evento) && isset($evento['fechas_evento'])))
                                     <p class="mb-1">
@@ -151,7 +147,6 @@
             @endforeach
         </div>
 
-        <!-- Paginación -->
         @if($totalPaginas > 1)
             <div class="row mt-4">
                 <div class="col-12">

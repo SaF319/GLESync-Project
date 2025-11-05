@@ -5,35 +5,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ComentarioController;
 
-// Página de inicio
 Route::get('/', [HomeController::class, 'index'])->name('home');
-/*
-Route::get('/', function () {
-    $eventos = [
-        [
-            'titulo' => 'Recital de Rock',
-            'descripcion' => 'Concierto en el estadio este viernes.',
-            'estado' => 'futuro',
-            'imagen_url' => asset('imagenes/recitales.jpg')
-        ],
-        [
-            'titulo' => 'Campeonato de Fútbol',
-            'descripcion' => 'Partido final del torneo local.',
-            'estado' => 'presente',
-            'imagen_url' => asset('imagenes/footbool.jpg')
-        ],
-        [
-            'titulo' => 'Muestra de Arte',
-            'descripcion' => 'Exposición de artistas locales en el museo.',
-            'estado' => 'futuro',
-            'imagen_url' => asset('imagenes/muestraArte.jpg')
-        ],
-    ];
-
-    return view('home', compact('eventos'));
-})->name('home');
-*/
 
 Route::get('/login', function () {
     return view('login');
@@ -56,24 +30,23 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth');
 
 
-    /*
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard')->middleware('auth');
-*/
+
+Route::post('/comentario', [ComentarioController::class, 'store'])->name('comentario.store');
+Route::get('/eventos/{evento}/comentarios', [ComentarioController::class, 'index'])
+->name('comentarios.index');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard');
     Route::resource('eventos', EventoController::class);
-
-    // nueva ruta para hacerse organizador
     Route::post('/organizador/hacerse', [EventoController::class, 'hacerseOrganizador'])
-        ->name('organizador.hacerse');
+    ->name('organizador.hacerse');
 });
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/buscar', [HomeController::class, 'buscar'])->name('home.buscar');
 
-Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
-Route::get('/eventos/{id}', [EventoController::class, 'show'])->name('eventos.show');
+Route::get('/eventos', [EventoController::class, 'index']);
+Route::get('/eventos/{id}', [EventoController::class, 'show']);
+

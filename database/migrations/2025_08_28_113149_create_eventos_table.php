@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('eventos', function (Blueprint $table) {
-            $table->id(); // PK auto-incremental estándar
+            $table->id();
             $table->string('titulo', 200);
-            $table->decimal('latitud', 10, 7)->nullable(); // Alternativa a geometry
-            $table->decimal('longitud', 10, 7)->nullable(); // Alternativa a geometry
+            $table->decimal('latitud', 10, 7)->nullable();
+            $table->decimal('longitud', 10, 7)->nullable();
             $table->mediumText('descripcion');
-            $table->unsignedBigInteger('organizador_id')->nullable(); // Ahora puede ser null
+            $table->unsignedBigInteger('organizador_id')->nullable();
             $table->timestamps();
 
             $table->foreign('organizador_id')

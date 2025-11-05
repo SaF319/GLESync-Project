@@ -10,6 +10,7 @@ use App\Models\Organizador;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Services\GoogleMapsService;
 
 class EventoController extends Controller
 {
@@ -78,7 +79,7 @@ class EventoController extends Controller
             'fecha_hora' => 'required|date',
             'categorias' => 'required|array',
             'categorias.*' => 'exists:categorias,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048'
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $usuario = Auth::user();
@@ -89,13 +90,17 @@ class EventoController extends Controller
                 ->withErrors('Debes registrarte como organizador antes de crear un evento.');
         }
 
+        // Usamos directamente las coordenadas del formulario (sin GoogleMapsService)
+        $latitud = $request->latitud ?? 0;
+        $longitud = $request->longitud ?? 0;
+
         // Llamamos al procedimiento almacenado
         DB::statement('CALL crear_evento(?, ?, ?, ?, ?, ?)', [
             $request->titulo,
             $request->descripcion,
             $request->fecha_hora,
-            $request->latitud ?? 0,
-            $request->longitud ?? 0,
+            $latitud,
+            $longitud,
             $organizador->id
         ]);
 
@@ -124,7 +129,7 @@ class EventoController extends Controller
             ]);
         }
 
-        return redirect()->route('eventos.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Evento creado exitosamente!');
     }
 
@@ -136,12 +141,15 @@ class EventoController extends Controller
         $usuario = Auth::user();
         $organizador = $usuario->organizador;
 
-        $evento = Evento::with(['categorias', 'fechasHoras', 'imagen'])
+        $evento = Evento::findOrFail($id);
+        $comentarios = $evento->comentarios;
+
+        $evento = Evento::with(['comentarios.usuario', 'categorias', 'fechasHoras', 'imagen'])
             ->where('id', $id)
             ->where('organizador_id', $organizador->id)
             ->firstOrFail();
 
-        return view('eventos.show', compact('evento'));
+        return view('eventos.show', compact('evento', 'comentarios'));
     }
 
     /**
@@ -231,7 +239,7 @@ class EventoController extends Controller
             ]);
         }
 
-        return redirect()->route('eventos.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Evento actualizado exitosamente!');
     }
 
@@ -255,7 +263,7 @@ class EventoController extends Controller
 
         $evento->delete();
 
-        return redirect()->route('eventos.index')
+        return redirect()->route('dashboard')
             ->with('success', 'Evento eliminado exitosamente!');
     }
 }

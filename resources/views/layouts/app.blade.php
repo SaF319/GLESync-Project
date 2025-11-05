@@ -116,6 +116,9 @@
     @yield('content')
 </main>
 
+{{-- Mapa APIGoogleMaps --}}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}&callback=initMap" async defer></script>
+
 {{-- Footer --}}
 <footer class="bg-dark text-light text-center py-3 mt-5">
     <p>&copy; {{ date('Y') }} Portal de Eventos | Sobre nosotros: Somos una comunidad que promueve cultura, deporte y música.</p>

@@ -18,6 +18,7 @@ class HomeController extends Controller
             ->get()
             ->map(function ($evento) {
                 return [
+                    'id' => $evento->id,
                     'titulo' => $evento->titulo,
                     'descripcion' => $evento->descripcion,
                     'estado' => $evento->fechasHoras->first() && $evento->fechasHoras->first()->fecha_hora > now()
@@ -35,6 +36,7 @@ class HomeController extends Controller
             ->get()
             ->map(function ($evento) {
                 return [
+                    'id' => $evento->id,
                     'titulo' => $evento->titulo,
                     'descripcion' => $evento->descripcion,
                     'estado' => $evento->fechasHoras->first() && $evento->fechasHoras->first()->fecha_hora > now()

@@ -65,4 +65,6 @@
         <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">Cancelar</a>
     </form>
 </div>
+    {{-- Script de Google Maps --}}
+        <script async src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}&callback=initMap"></script>
 @endsection

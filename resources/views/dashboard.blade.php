@@ -16,12 +16,6 @@
                     <p class="text-muted mb-3">Bienvenido a tu panel de control de Planazo</p>
 
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <!--
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-danger">Cerrar sesión</button>
-                        </form>
-                        <a href="{{ url('/') }}" class="btn btn-outline-dark">Volver a Home</a>-->
                         <a href="{{ route('eventos.create') }}" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i> Crear Nuevo Evento
                         </a>

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('evento_id');
             $table->unsignedBigInteger('usuario_id');
-            $table->string('comentario', 500); // Aumenté el límite a 500 caracteres
+            $table->string('comentario', 500);
             $table->timestamps();
 
             $table->foreign('evento_id')
@@ -25,7 +25,7 @@ return new class extends Migration
                     ->on('usuarios')
                     ->onDelete('cascade');
 
-            $table->unique(['evento_id', 'usuario_id']); // Unique en lugar de primary compuesta
+            $table->unique(['evento_id', 'usuario_id']);
         });
     }
 
