@@ -17,7 +17,7 @@ Podés usar el siguiente ejemplo como base:
 
 APP_NAME=Laravel
 APP_ENV=local
-APP_KEY=base64:QIm3oZCu3vC3ybArJ0MYdtOJrRjc0OS+1otKW5dy2mI=
+APP_KEY=
 APP_DEBUG=true
 APP_URL=http://localhost
 
@@ -26,7 +26,7 @@ APP_FALLBACK_LOCALE=en
 APP_FAKER_LOCALE=en_US
 
 APP_MAINTENANCE_DRIVER=file
-# APP_MAINTENANCE_STORE=database
+#APP_MAINTENANCE_STORE=database
 
 PHP_CLI_SERVER_WORKERS=4
 BCRYPT_ROUNDS=12
@@ -38,7 +38,7 @@ LOG_LEVEL=debug
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
-DB_PORT=3307
+DB_PORT=3308
 DB_DATABASE=planazo
 DB_USERNAME=root
 DB_PASSWORD=root
@@ -70,9 +70,9 @@ Esto levantará los servicios definidos (web, base de datos, etc.) en modo detac
 🧱 Migraciones y Seeders
 
 Una vez levantado el entorno, ejecutá:
-
+********************
 php artisan migrate --seed 
-
+********************
 para que el proyecto cargue las migraciones y los seeders
 
 Finalmente, corré el comando php artisan serve y pronto!!
