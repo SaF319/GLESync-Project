@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log; // ✅ Importar Facade Log
+use Illuminate\Support\Facades\Log;
 
 class Evento extends Model
 {
@@ -19,43 +19,36 @@ class Evento extends Model
         'organizador_id'
     ];
 
-    // Relación con organizador
     public function organizador()
     {
         return $this->belongsTo(Organizador::class, 'organizador_id');
     }
 
-    // Relación con fechas y horas
     public function fechasHoras()
     {
         return $this->hasMany(FechaHora::class, 'evento_id');
     }
 
-    // Relación con comentarios
     public function comentarios()
     {
         return $this->hasMany(Comentario::class, 'evento_id');
     }
 
-    // Relación con interacciones
     public function interacciones()
     {
         return $this->hasMany(Interaccion::class, 'evento_id');
     }
 
-    // Relación con categorías (muchos a muchos)
     public function categorias()
     {
         return $this->belongsToMany(Categoria::class, 'categoria_evento', 'evento_id', 'categoria_id');
     }
 
-    // Relación con creaciones
     public function creaciones()
     {
         return $this->hasMany(Creacion::class, 'evento_id');
     }
 
-    // Relación con imágenes (uno a uno)
     public function imagen()
     {
         return $this->hasOne(Imagen::class, 'evento_id');
@@ -76,7 +69,6 @@ class Evento extends Model
             'offset' => $offset
         ]);
 
-        // ✅ LLAMAR AL PROCEDIMIENTO ALMACENADO
         $results = DB::select(
             'CALL buscar_eventos_por_nombre(?, ?, ?, ?)',
             [$organizadorId, $searchTerm, $perPage, $offset]
@@ -84,7 +76,6 @@ class Evento extends Model
 
         Log::info("📦 Resultados del procedimiento:", ['count' => count($results)]);
 
-        // DEBUG: Mostrar estructura del primer resultado
         if (!empty($results)) {
             $primerResultado = (array) $results[0];
             Log::info("🔍 ESTRUCTURA del primer resultado:", array_keys($primerResultado));
@@ -96,7 +87,6 @@ class Evento extends Model
     } catch (\Exception $e) {
         Log::error('❌ Error en procedimiento buscar_eventos_por_nombre: ' . $e->getMessage());
 
-        // Fallback a búsqueda Eloquent
         return self::where('organizador_id', $organizadorId)
             ->where(function($query) use ($searchTerm) {
                 $query->where('titulo', 'LIKE', "%{$searchTerm}%")

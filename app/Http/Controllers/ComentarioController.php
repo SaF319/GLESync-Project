@@ -10,12 +10,10 @@ class ComentarioController extends Controller
 {
     public function store(Request $request)
     {
-        // Verificar que el usuario está autenticado
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para comentar');
         }
 
-        // Validar los datos del formulario
         $validated = $request->validate([
             "comentario" => "required|string|max:500",
             "evento_id" => "required|exists:eventos,id"
@@ -25,19 +23,16 @@ class ComentarioController extends Controller
         $eventoId = $validated['evento_id'];
 
         try {
-            // Buscar si ya existe un comentario de este usuario en este evento
             $comentarioExistente = Comentario::where('evento_id', $eventoId)
-                                            ->where('usuario_id', $usuarioId)
-                                            ->first();
+                ->where('usuario_id', $usuarioId)
+                ->first();
 
             if ($comentarioExistente) {
-                // Si existe, actualizar el comentario
                 $comentarioExistente->update([
                     'comentario' => $validated['comentario']
                 ]);
                 $mensaje = 'Comentario actualizado correctamente';
             } else {
-                // Si no existe, crear nuevo comentario
                 Comentario::create([
                     "comentario" => $validated['comentario'],
                     "usuario_id" => $usuarioId,

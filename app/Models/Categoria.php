@@ -13,13 +13,11 @@ class Categoria extends Model
         'nombre'
     ];
 
-    // Relación con eventos (muchos a muchos)
     public function eventos()
     {
         return $this->belongsToMany(Evento::class, 'categoria_evento', 'categoria_id', 'evento_id');
     }
 
-    // Relación con preferencias
     public function preferencias()
     {
         return $this->hasMany(Preferencia::class, 'categoria_id');

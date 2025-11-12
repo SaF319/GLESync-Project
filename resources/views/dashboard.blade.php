@@ -59,8 +59,8 @@
                                         @if($evento->imagen)
                                             <img src="{{ asset($evento->imagen->ruta) }}" class="card-img-top" alt="{{ $evento->titulo }}" style="height: 200px; object-fit: cover;">
                                         @else
-                                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                                <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+                                            <div class="card h-100 shadow-sm card-img-top" style="height: 100px; object-fit: cover;">
+                                                <img src="{{ isset($evento['imagen']['ruta']) ? asset($evento['imagen']['ruta']) : asset('imagenes/no_image.png') }}" class="d-block w-100" alt="Evento">
                                             </div>
                                         @endif
                                         <div class="card-body">

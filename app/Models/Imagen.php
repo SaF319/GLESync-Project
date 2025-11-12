@@ -17,7 +17,6 @@ class Imagen extends Model
         'ruta'
     ];
 
-    // Relación con evento
     public function evento()
     {
         return $this->belongsTo(Evento::class, 'evento_id');

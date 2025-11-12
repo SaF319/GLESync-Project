@@ -9,7 +9,7 @@
         @if($evento->imagen)
             <img src="{{ asset($evento->imagen->ruta) }}" class="card-img-top" alt="{{ $evento->titulo }}" style="height: 400px; object-fit: cover;">
         @else
-            <h3>Imagen no disponible</h3>
+            <img src="{{ isset($evento['imagen']['ruta']) ? asset($evento['imagen']['ruta']) : asset('imagenes/no_image.png') }}" class="mx-auto rounded shadow" alt="Evento" style="max-width: 550px; width: 100%; height: auto; object-fit: cover;">
         @endif
 
         {{-- Overlay categorías y hora --}}

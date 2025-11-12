@@ -77,10 +77,7 @@
                                  alt="{{ is_array($evento) ? $evento['titulo'] : $evento->titulo }}"
                                  style="height: 200px; object-fit: cover;">
                         @else
-                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
-                                 style="height: 200px;">
-                                <i class="fas fa-calendar-alt fa-3x text-muted"></i>
-                            </div>
+                            <img src="{{ isset($evento['imagen']['ruta']) ? asset($evento['imagen']['ruta']) : asset('imagenes/no_image.png') }}" class="d-block w-100" alt="Evento">
                         @endif
 
                         <div class="card-body">

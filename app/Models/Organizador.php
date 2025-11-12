@@ -16,19 +16,16 @@ class Organizador extends Model
         'contacto'
     ];
 
-    // Relación con usuario
     public function usuario()
     {
         return $this->belongsTo(Usuarios::class, 'usuario_id');
     }
 
-    // Relación con eventos
     public function eventos()
     {
         return $this->hasMany(Evento::class, 'organizador_id');
     }
 
-    // Relación con creaciones
     public function creaciones()
     {
         return $this->hasMany(Creacion::class, 'organizador_id');

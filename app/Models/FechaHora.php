@@ -16,12 +16,10 @@ class FechaHora extends Model
         'fecha_hora'
     ];
 
-    // 👇 Esto convierte fecha_hora en objeto Carbon automáticamente
     protected $casts = [
         'fecha_hora' => 'datetime',
     ];
 
-    // Relación con evento
     public function evento()
     {
         return $this->belongsTo(Evento::class, 'evento_id');

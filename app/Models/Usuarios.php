@@ -13,17 +13,20 @@ class Usuarios extends Authenticatable
     protected $table = 'usuarios';
 
     protected $fillable = [
-        'nombre',
-        'email',
-        'password'
+    'nombre',
+    'email',
+    'google_id',
+    'password',
+    'google2fa_secret',
+    'is_2fa_enabled',
     ];
+
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    // Relaciones (mantengo las que tenías)
     public function organizador()
     {
         return $this->hasOne(Organizador::class, 'usuario_id');

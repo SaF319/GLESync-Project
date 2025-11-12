@@ -57,14 +57,60 @@
             <label for="imagen" class="form-label">Imagen</label>
             <input type="file" name="imagen" id="imagen" class="form-control">
             @if($evento->imagen)
-                <img src="{{ asset($evento->imagen->ruta) }}" alt="Imagen Evento" class="mt-2" style="max-width:200px;">
+            <img src="{{ isset($evento['imagen']) && !empty($evento['imagen']['ruta']) ? asset($evento['imagen']['ruta']) : asset('imagenes/no_image.png') }}" class="d-block w-100" alt="Evento">
             @endif
+        </div>
+
+        {{-- Ubicación (Google Maps) --}}
+        <div class="mb-3">
+            <label class="form-label">Ubicación del evento</label>
+            <div id="map" style="height: 400px; border-radius: 8px;"></div>
+
+            <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud', $evento->latitud ?? '') }}">
+            <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $evento->longitud ?? '') }}">
         </div>
 
         <button type="submit" class="btn btn-dark">Actualizar Evento</button>
         <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">Cancelar</a>
     </form>
 </div>
-    {{-- Script de Google Maps --}}
-        <script async src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}&callback=initMap"></script>
+
+{{-- Script de Google Maps --}}
+<script>
+    let map;
+    let marker;
+
+    function initMap() {
+        const latitud = parseFloat(document.getElementById('latitud').value) || -34.9011;
+        const longitud = parseFloat(document.getElementById('longitud').value) || -56.1645;
+
+        const initialPosition = { lat: latitud, lng: longitud };
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: initialPosition,
+            zoom: 14,
+        });
+
+        marker = new google.maps.Marker({
+            position: initialPosition,
+            map: map,
+            draggable: true,
+        });
+
+        // Actualizar coordenadas al mover el marcador
+        marker.addListener('dragend', function (event) {
+            document.getElementById('latitud').value = event.latLng.lat();
+            document.getElementById('longitud').value = event.latLng.lng();
+        });
+
+        // Click en el mapa para mover el marcador
+        map.addListener('click', function (event) {
+            marker.setPosition(event.latLng);
+            document.getElementById('latitud').value = event.latLng.lat();
+            document.getElementById('longitud').value = event.latLng.lng();
+        });
+    }
+</script>
+
+<script async src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}&callback=initMap"></script>
 @endsection

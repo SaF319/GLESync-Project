@@ -10,7 +10,6 @@ class DashboardController extends Controller
     {
         $usuario = Auth::user();
 
-
         if ($usuario->organizador) {
             $eventos = $usuario->organizador->eventos()
                 ->with(['categorias', 'fechasHoras', 'imagen'])

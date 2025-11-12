@@ -14,13 +14,11 @@ class Preferencia extends Model
         'categoria_id'
     ];
 
-    // Relación con usuario
     public function usuario()
     {
         return $this->belongsTo(Usuarios::class, 'usuario_id');
     }
 
-    // Relación con categoría
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');

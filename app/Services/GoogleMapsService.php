@@ -16,7 +16,7 @@ class GoogleMapsService
     public function obtenerCoordenadas($direccion)
     {
         $url = "https://maps.googleapis.com/maps/api/geocode/json";
-/* se deja asi hasta que se soluciones tema certificados de API
+/* se deja asi hasta que se solucione el tema certificados de API
         $response = Http::get($url, [
             'address' => $direccion,
             'key' => $this->apiKey,

@@ -21,7 +21,7 @@
         <div class="carousel-inner">
             @foreach($eventos as $index => $evento)
                 <div class="carousel-item @if($index == 0) active @endif">
-                    <img src="{{ $evento['imagen_url'] ?? 'https://via.placeholder.com/1200x400' }}" class="d-block w-100" alt="Evento">
+                    <img src="{{ $evento['imagen_url'] ?? asset('imagenes/no_image.png') }}" class="d-block w-100" alt="Evento">
                     <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
                         <h5>{{ $evento['titulo'] }}</h5>
                         <p>{{ \Illuminate\Support\Str::limit($evento['descripcion'], 100) }}</p>
@@ -91,7 +91,7 @@
         @foreach($eventos as $evento)
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="{{ $evento['imagen_url'] ?? 'https://via.placeholder.com/400x200' }}" class="card-img-top" alt="Evento">
+                    <img src="{{ $evento['imagen_url'] ?? asset('imagenes/no_image.png') }}" class="d-block w-100" alt="Evento">
                     <div class="card-body">
                         <h5 class="card-title">{{ $evento['titulo'] }}</h5>
                         <p class="card-text">{{ \Illuminate\Support\Str::limit($evento['descripcion'], 80) }}</p>

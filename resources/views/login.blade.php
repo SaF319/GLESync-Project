@@ -31,14 +31,24 @@
                         <label for="password" class="form-label">Contraseña</label>
                         <input type="password" class="form-control" name="password" id="password" placeholder="••••••••" required>
                     </div>
+                    <!-- dentro del form de login, antes del botón submit -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="setup_2fa_after" id="setup_2fa_after" value="1">
+                        <label class="form-check-label" for="setup_2fa_after">
+                            Activar 2FA después de iniciar sesión (mayor seguridad)
+                        </label>
+                    </div>
+
                     <button type="submit" class="btn btn-dark w-100">Ingresar</button>
                 </form>
 
                 <hr>
 
                 {{-- Botones sociales (decorativos) --}}
-                <div class="d-grid gap-2">
-                    <button class="btn btn-google">Iniciar con Google</button>
+                <div class="mt-3 text-center">
+                    <a href="{{ route('google.redirect') }}" class="btn btn-outline-danger w-100">
+                        <i class="fab fa-google"></i> Iniciar sesión con Google
+                    </a>
                     <button class="btn btn-facebook">Iniciar con Facebook</button>
                 </div>
 
