@@ -38,11 +38,25 @@
                         <label for="password_confirmation" class="form-label">Confirmar contraseña</label>
                         <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="••••••••" required>
                     </div>
+                    <!-- dentro del form de registro, antes del button submit -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="enable_2fa" id="enable_2fa" value="1">
+                        <label class="form-check-label" for="enable_2fa">
+                            Activar verificación en dos pasos (2FA) ahora
+                        </label>
+                    </div>
+
                     <button type="submit" class="btn btn-dark w-100">Registrarse</button>
                 </form>
 
                 <div class="mt-3 text-center">
                     <small>¿Ya tienes cuenta? <a href="{{ url('/login') }}">Inicia sesión</a></small>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <a href="{{ route('google.redirect') }}" class="btn btn-outline-danger w-100">
+                        <i class="fab fa-google"></i> Iniciar sesión con Google
+                    </a>
                 </div>
 
                 {{-- Botón volver a home --}}

@@ -7,10 +7,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Primero eliminar el procedimiento si existe
         DB::unprepared('DROP PROCEDURE IF EXISTS buscar_eventos_por_nombre');
 
-        // Crear el procedimiento almacenado con búsqueda insensible a mayúsculas/minúsculas
         DB::unprepared('
             CREATE PROCEDURE buscar_eventos_por_nombre(
                 IN p_organizador_id BIGINT,

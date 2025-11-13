@@ -35,8 +35,52 @@
             <input type="file" name="imagen" id="imagen" class="form-control">
         </div>
 
+        <div class="mb-3">
+            <label class="form-label">Ubicación del evento</label>
+
+            <input type="hidden" name="latitud" id="latitud">
+            <input type="hidden" name="longitud" id="longitud">
+
+            <div id="map" style="height: 400px; width: 100%; border-radius: 10px;"></div>
+        </div>
+
+        <script>
+            let map;
+            let marker;
+
+            function initMap() {
+                const uruguayCenter = { lat: -34.9011, lng: -56.1645 }; // Montevideo
+
+                map = new google.maps.Map(document.getElementById("map"), {
+                    center: uruguayCenter,
+                    zoom: 12,
+                });
+
+                map.addListener("click", (e) => {
+                    placeMarker(e.latLng);
+                });
+            }
+
+            function placeMarker(location) {
+                if (marker) {
+                    marker.setPosition(location);
+                } else {
+                    marker = new google.maps.Marker({
+                        position: location,
+                        map: map,
+                    });
+                }
+
+                // Guardar las coordenadas en los campos ocultos
+                document.getElementById("latitud").value = location.lat();
+                document.getElementById("longitud").value = location.lng();
+            }
+        </script>
+
         <button type="submit" class="btn btn-primary">Crear Evento</button>
-        <a href="{{ route('eventos.index') }}" class="btn btn-secondary">Volver</a>
+        <a href="{{ route('dashboard') }}" class="btn btn-secondary">Volver</a>
     </form>
 </div>
+    {{-- Script de Google Maps --}}
+        <script async src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_KEY') }}&callback=initMap"></script>
 @endsection

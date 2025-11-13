@@ -14,13 +14,11 @@ class Creacion extends Model
         'organizador_id'
     ];
 
-    // Relación con evento
     public function evento()
     {
         return $this->belongsTo(Evento::class, 'evento_id');
     }
 
-    // Relación con organizador
     public function organizador()
     {
         return $this->belongsTo(Organizador::class, 'organizador_id');

@@ -13,7 +13,6 @@ class Participante extends Model
         'usuario_id'
     ];
 
-    // Relación con usuario
     public function usuario()
     {
         return $this->belongsTo(Usuarios::class, 'usuario_id');

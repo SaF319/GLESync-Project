@@ -16,12 +16,6 @@
                     <p class="text-muted mb-3">Bienvenido a tu panel de control de Planazo</p>
 
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <!--
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-danger">Cerrar sesión</button>
-                        </form>
-                        <a href="{{ url('/') }}" class="btn btn-outline-dark">Volver a Home</a>-->
                         <a href="{{ route('eventos.create') }}" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i> Crear Nuevo Evento
                         </a>
@@ -65,8 +59,8 @@
                                         @if($evento->imagen)
                                             <img src="{{ asset($evento->imagen->ruta) }}" class="card-img-top" alt="{{ $evento->titulo }}" style="height: 200px; object-fit: cover;">
                                         @else
-                                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                                <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+                                            <div class="card h-100 shadow-sm card-img-top" style="height: 100px; object-fit: cover;">
+                                                <img src="{{ isset($evento['imagen']['ruta']) ? asset($evento['imagen']['ruta']) : asset('imagenes/no_image.png') }}" class="d-block w-100" alt="Evento">
                                             </div>
                                         @endif
                                         <div class="card-body">

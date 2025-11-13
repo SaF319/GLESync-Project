@@ -1,0 +1,77 @@
+version: '3.9'
+
+services:
+  # -------------------------------
+  # SERVIDOR PLANAZO (APP)
+  # -------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: planazo_app
+    depends_on:
+      - mysql_primario
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql_primario
+      DB_PORT: 3308
+      DB_DATABASE: planazo
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    command: bash -c "sleep 60 && php artisan migrate --force && php artisan db:seed --force && apache2-foreground"
+
+  # -------------------------------
+  # MYSQL PRIMARIO
+  # -------------------------------
+  mysql_primario:
+    image: mysql:8.0.30-debian
+    container_name: mysql_primario
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: planazo
+    volumes:
+      - datos_primario:/var/lib/mysql
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3308:3306"
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --gtid_mode=ON
+      --enforce-gtid-consistency=ON
+      --log_replica_updates=ON
+      --binlog_format=ROW
+
+  # -------------------------------
+  # MYSQL SECUNDARIO
+  # -------------------------------
+  mysql_secundario:
+    image: mysql:8.0.30-debian
+    container_name: Replicacion_secundario
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Replicacion_planazo
+    depends_on:
+      - mysql_primario
+    command: >
+      --server-id=2
+      --relay-log=mysql-relay-bin
+      --gtid_mode=ON
+      --enforce-gtid-consistency=ON
+      --log_replica_updates=ON
+      --read-only=ON
+      --log-bin=mysql-bin
+      --binlog-format=row
+      --binlog-expire-logs-seconds=604800
+    ports:
+      - "3309:3306"
+    volumes:
+      - datos_secundario:/var/lib/mysql
+
+volumes:
+  datos_primario:
+  datos_secundario:

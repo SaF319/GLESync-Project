@@ -19,7 +19,7 @@ return new class extends Migration
                     ->on('eventos')
                     ->onDelete('cascade');
 
-            $table->unique(['evento_id', 'fecha_hora']); // Unique en lugar de primary
+            $table->unique(['evento_id', 'fecha_hora']);
         });
     }
 

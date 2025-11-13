@@ -14,13 +14,11 @@ class CategoriaEvento extends Model
         'evento_id'
     ];
 
-    // Relación con categoría
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
 
-    // Relación con evento
     public function evento()
     {
         return $this->belongsTo(Evento::class, 'evento_id');

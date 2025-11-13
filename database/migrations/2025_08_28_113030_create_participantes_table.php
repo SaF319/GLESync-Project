@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('participantes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('usuario_id'); // Relación con usuarios
+            $table->unsignedBigInteger('usuario_id');
             $table->timestamps();
 
             $table->foreign('usuario_id')

@@ -15,13 +15,11 @@ class Comentario extends Model
         'comentario'
     ];
 
-    // Relación con evento
     public function evento()
     {
         return $this->belongsTo(Evento::class, 'evento_id');
     }
 
-    // Relación con usuario
     public function usuario()
     {
         return $this->belongsTo(Usuarios::class, 'usuario_id');

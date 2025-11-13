@@ -6,3 +6,110 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
+
+
+Instrucciones del Despliegue Local:
+----------------------------------------
+Configuración del Entorno (.env)
+
+Antes de iniciar el proyecto, asegurate de configurar correctamente el archivo .env.
+Podés usar el siguiente ejemplo como base:
+
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+APP_MAINTENANCE_DRIVER=file
+# APP_MAINTENANCE_STORE=database
+
+PHP_CLI_SERVER_WORKERS=4
+
+BCRYPT_ROUNDS=12
+
+LOG_CHANNEL=stack
+LOG_STACK=single
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3308
+DB_DATABASE=planazo
+DB_USERNAME=root
+DB_PASSWORD=root
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=localhost
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+# CACHE_PREFIX=
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_CLIENT=phpredis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=log
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+VITE_APP_NAME="${APP_NAME}"
+
+Generar clave de aplicación
+
+Ejecutá el siguiente comando para generar la clave de seguridad de Laravel:
+
+php artisan key:generate
+
+Esta clave es esencial para la seguridad de la aplicación, ya que se usa para cifrar y descifrar datos.
+Asegurate de que cada instancia del proyecto tenga su propia clave única.
+----------------------------------------
+
+
+----------------------------------------
+Instalación con Docker:
+
+El proyecto incluye un Dockerfile y un docker-compose.yml listos para levantar el entorno completo.
+Podés crear y ejecutar los contenedores con:
+
+********************
+docker compose up -d
+********************
+
+Esto levantará los servicios definidos (web, base de datos, etc.) en modo detached.
+----------------------------------------
+🧱 Migraciones y Seeders
+
+Una vez levantado el entorno, ejecutá:
+
+php artisan migrate --seed 
+
+para que el proyecto cargue las migraciones y los seeders
+
+Finalmente, corré el comando php artisan serve y pronto!!
