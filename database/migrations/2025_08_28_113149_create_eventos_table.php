@@ -14,13 +14,15 @@ return new class extends Migration
             $table->decimal('latitud', 10, 7)->nullable();
             $table->decimal('longitud', 10, 7)->nullable();
             $table->mediumText('descripcion');
+
+            // Esta columna es clave foránea
             $table->unsignedBigInteger('organizador_id')->nullable();
             $table->timestamps();
 
             $table->foreign('organizador_id')
-                    ->references('id')
-                    ->on('organizadores')
-                    ->onDelete('cascade');
+                  ->references('id')
+                  ->on('organizadores')
+                  ->onDelete('cascade');
         });
     }
 

@@ -2,94 +2,98 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Hash;
 
 class Usuarios extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $table = 'usuarios';
 
     protected $fillable = [
         'nombre',
         'email',
-        'google_id',
         'password',
-        'google2fa_secret',
-        'is_2fa_enabled',
-
-        // === NUEVOS CAMPOS === //
         'es_root',
         'baneado',
         'motivo_baneo',
         'baneado_hasta',
+        'is_2fa_enabled',
+        'google2fa_secret'
     ];
 
     protected $hidden = [
         'password',
+        'google2fa_secret',
         'remember_token',
     ];
 
-    // ============================
-    //        RELACIONES
-    // ============================
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'is_2fa_enabled' => 'boolean',
+        'es_root' => 'boolean',
+        'baneado' => 'boolean',
+        'baneado_hasta' => 'datetime',
+    ];
 
+    /**
+     * Encriptar automáticamente el password al asignarlo
+     */
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = Hash::make($password);
+    }
+
+    /**
+     * Relación con comentarios
+     */
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class, 'id_usuario');
+    }
+
+    /**
+     * Relación con organizador
+     * ⚡ Corregido: la columna en la tabla es 'usuario_id'
+     */
     public function organizador()
     {
         return $this->hasOne(Organizador::class, 'usuario_id');
     }
 
-    public function participante()
+    /**
+     * Check si es root
+     */
+    public function isRoot()
     {
-        return $this->hasOne(Participante::class, 'usuario_id');
+        return $this->es_root;
     }
 
-    public function comentarios()
+    /**
+     * Scope de usuarios baneados
+     */
+    public function scopeBaneados($query)
     {
-        return $this->hasMany(Comentario::class, 'usuario_id');
+        return $query->where('baneado', true);
     }
 
-    public function interacciones()
+    /**
+     * Scope de usuarios activos
+     */
+    public function scopeActivos($query)
     {
-        return $this->hasMany(Interaccion::class, 'usuario_id');
+        return $query->where('baneado', false);
     }
 
-    public function preferencias()
+    /**
+     * Check 2FA
+     */
+    public function has2FAEnabled()
     {
-        return $this->hasMany(Preferencia::class, 'usuario_id');
-    }
-
-    // ============================
-    //   MÉTODOS DEL USUARIO ROOT
-    // ============================
-
-    // ¿Es root?
-    public function esRoot()
-    {
-        return $this->es_root === 1;
-    }
-
-    // ¿Está baneado?
-    public function estaBaneado()
-    {
-        return $this->baneado === 1;
-    }
-
-    // ¿El baneo está activo?
-    public function baneoActivo()
-    {
-        if (!$this->estaBaneado()) {
-            return false;
-        }
-
-        // Si hay fecha de vencimiento del baneo
-        if ($this->baneado_hasta && now()->lt($this->baneado_hasta)) {
-            return true;
-        }
-
-        // Si baneado = 1 y no tiene fecha → baneo permanente
-        return $this->baneado === 1;
+        return $this->is_2fa_enabled && $this->google2fa_secret;
     }
 }

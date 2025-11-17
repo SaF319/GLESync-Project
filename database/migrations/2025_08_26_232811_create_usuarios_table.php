@@ -7,31 +7,32 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-{
-    Schema::create('usuarios', function (Blueprint $table) {
-        $table->id();
-        $table->string('nombre', 100);
-        $table->string('email')->unique();
-        $table->string('password');
+    {
+        Schema::create('usuarios', function (Blueprint $table) {
+            $table->id();
+            $table->string('nombre', 100);
+            $table->string('email')->unique();
+            $table->string('password');
 
-        // === NUEVO === //
-        // usuario root (administrador absoluto)
-        $table->boolean('es_root')->default(false);
+            // Usuario root
+            $table->boolean('es_root')->default(false);
 
-        // usuario baneado
-        $table->boolean('baneado')->default(false);
+            // Usuario baneado
+            $table->boolean('baneado')->default(false);
+            $table->string('motivo_baneo')->nullable();
+            $table->timestamp('baneado_hasta')->nullable();
 
-        // razón del baneo
-        $table->string('motivo_baneo')->nullable();
+            // 2FA
+            $table->boolean('is_2fa_enabled')->default(false);
+            $table->string('google2fa_secret')->nullable();
 
-        // Fecha de baneo (si querés ban temporal)
-        $table->timestamp('baneado_hasta')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
 
-        $table->rememberToken();
-        $table->timestamps();
-    });
-}
-
+            // SoftDeletes
+            $table->softDeletes();
+        });
+    }
 
     public function down(): void
     {

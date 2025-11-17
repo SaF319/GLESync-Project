@@ -4,71 +4,97 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Usuarios;
-use App\Models\Comentarios;
 use App\Models\Evento;
+use App\Models\Comentario;
+use Illuminate\Routing\Controller as BaseController;
 
-class RootController extends Controller
+class RootController extends BaseController
 {
+    public function __construct()
+    {
+        // Middleware root y auth
+        $this->middleware(['auth', 'root']);
+    }
+
+    // Dashboard root
     public function index()
     {
         return view('admin.dashboard');
     }
 
-    /** LISTA COMPLETA DE USUARIOS */
+    // ===========================
+    //      USUARIOS
+    // ===========================
     public function usuariosIndex()
     {
-        $usuarios = Usuarios::with(['comentarios'])->get();
-
-        return view('admin.usuarios', compact('usuarios'));
+        $usuarios = Usuarios::paginate(20);
+        return view('admin.usuarios.index', compact('usuarios'));
     }
 
-    /** BANEAR / DESBANEAR */
-    public function toggleBaneo($id)
+    public function toggleBaneo(Request $request, $id)
     {
         $usuario = Usuarios::findOrFail($id);
+
+        if ($usuario->es_root) {
+            return redirect()->back()->withErrors('No puedes banear al usuario root.');
+        }
+
         $usuario->baneado = !$usuario->baneado;
+
+        if ($usuario->baneado) {
+            $usuario->motivo_baneo = $request->motivo_baneo ?? 'Sin motivo especificado';
+        } else {
+            $usuario->motivo_baneo = null;
+            $usuario->baneado_hasta = null;
+        }
+
         $usuario->save();
 
-        return back()->with('success', 'Estado actualizado correctamente.');
+        return redirect()->back()->with('success', 'Estado de baneo actualizado.');
     }
 
-    /** LISTA COMPLETA DE COMENTARIOS */
-    public function comentariosIndex()
-    {
-        $comentarios = Comentarios::with(['usuario', 'evento'])
-            ->withTrashed()
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('admin.comentarios', compact('comentarios'));
-    }
-
-    /** RESTAURAR COMENTARIO */
-    public function comentarioRestore($id)
-    {
-        Comentarios::withTrashed()->findOrFail($id)->restore();
-
-        return back()->with('success', 'Comentario restaurado.');
-    }
-
-    /** LISTA COMPLETA DE EVENTOS (si lo querés en el panel root) */
+    // ===========================
+    //      EVENTOS
+    // ===========================
     public function eventosIndex()
     {
-        $eventos = Evento::withTrashed()->get();
-        return view('admin.eventos', compact('eventos'));
+        $eventos = Evento::with('organizador.usuario')->paginate(20);
+        return view('admin.eventos.index', compact('eventos'));
     }
 
-    /** VER TODOS LOS COMENTARIOS DE UN USUARIO */
+    // ===========================
+    //      COMENTARIOS
+    // ===========================
+    public function comentariosIndex()
+    {
+        $comentarios = Comentario::with(['usuario','evento'])
+                                    ->withTrashed()
+                                    ->paginate(20);
+
+        return view('admin.comentarios.index', compact('comentarios'));
+    }
+
+    public function comentarioRestore($id)
+    {
+        $comentario = Comentario::withTrashed()->findOrFail($id);
+        $comentario->restore();
+
+        return redirect()->back()->with('success','Comentario restaurado correctamente.');
+    }
+
+    // ===========================
+    //   COMENTARIOS DE USUARIO
+    // ===========================
     public function usuarioComentarios($id)
     {
         $usuario = Usuarios::findOrFail($id);
 
-        $comentarios = Comentarios::withTrashed()
-            ->where('id_usuario', $id)
-            ->with('evento')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $comentarios = Comentario::withTrashed()
+                                 ->where('id_usuario', $id)
+                                 ->with('evento')
+                                 ->orderBy('created_at','desc')
+                                 ->paginate(20);
 
-        return view('admin.usuario_comentarios', compact('usuario', 'comentarios'));
+        return view('admin.usuarios.comentarios', compact('usuario','comentarios'));
     }
 }

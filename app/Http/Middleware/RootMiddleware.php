@@ -1,25 +1,29 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
+namespace App\Http\Middleware;
 
-return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware): void {
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
-        // CSRF
-        $middleware->validateCsrfTokens(except: []);
+class RootMiddleware
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $user = Auth::user();
 
-        // Alias de middleware root
-        $middleware->alias([
-            'root' => \App\Http\Middleware\RootMiddleware::class,
-        ]);
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-    })
-    ->create();
+        // Si no está logueado → redirigir al login
+        if (!$user) {
+            return redirect()->route('login')
+                ->withErrors(['auth' => 'Debes iniciar sesión.']);
+        }
+
+        // Si no es root → abortar
+        if (!$user->es_root) {
+            abort(403, 'Acceso denegado. Solo root.');
+        }
+
+        return $next($request);
+    }
+}
