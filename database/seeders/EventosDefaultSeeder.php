@@ -5,14 +5,11 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Usuarios;
 use App\Models\Organizador;
-use App\Models\Evento;
 use App\Models\Imagen;
-use App\Models\FechaHora;
 use App\Models\Categoria;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class EventosDefaultSeeder extends Seeder
 {
@@ -21,32 +18,26 @@ class EventosDefaultSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
         try {
-            $this->command->info('🔍 Iniciando EventosDefaultSeeder (PRIMERO - IDs 1)...');
+            $this->command->info('🎯 INICIANDO SEEDER CON PROCEDIMIENTO ALMACENADO');
 
-            // ✅ FORZAR IDs específicos para mantener consistencia
-            DB::statement('ALTER TABLE usuarios AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE organizadores AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE eventos AUTO_INCREMENT = 1;');
+            // ✅ Usar firstOrCreate para evitar duplicados
+            $usuario = Usuarios::firstOrCreate(
+                ['email' => 'organizador@planazo.com'],
+                [
+                    'nombre' => 'Organizador Planazo',
+                    'password' => Hash::make('12345678'),
+                    'es_root' => false,
+                ]
+            );
 
-            // ✅ Crear usuario organizador con ID: 1
-            $usuario = Usuarios::create([
-                'nombre' => 'Organizador Planazo',
-                'email' => 'organizador@planazo.com',
-                'password' => Hash::make('12345678'),
-                'es_root' => false,
-            ]);
+            $organizador = Organizador::firstOrCreate(
+                ['usuario_id' => $usuario->id],
+                ['contacto' => '099123456']
+            );
 
-            $this->command->info("✅ Usuario Organizador creado: ID {$usuario->id}");
+            $this->command->info("✅ Usuario: {$usuario->id}, Organizador: {$organizador->id}");
 
-            // ✅ Crear organizador con ID: 1
-            $organizador = Organizador::create([
-                'usuario_id' => $usuario->id,
-                'contacto' => '099123456'
-            ]);
-
-            $this->command->info("✅ Organizador creado: ID {$organizador->id}");
-
-            // ✅ Lista de eventos por defecto
+            // ✅ Eventos data - USANDO EL PROCEDIMIENTO ALMACENADO
             $eventosDefault = [
                 [
                     'titulo' => 'Recital de Rock',
@@ -54,10 +45,7 @@ class EventosDefaultSeeder extends Seeder
                     'categoria' => 'Conciertos',
                     'latitud' => -34.8984,
                     'longitud' => -56.17842,
-                    'imagen' => [
-                        'nombre' => 'recitales.jpg',
-                        'ruta'   => 'imagenes/recitales.jpg',
-                    ],
+                    'imagen' => ['nombre' => 'recitales.jpg', 'ruta' => 'imagenes/recitales.jpg'],
                 ],
                 [
                     'titulo' => 'Campeonato de Fútbol',
@@ -65,10 +53,7 @@ class EventosDefaultSeeder extends Seeder
                     'categoria' => 'Deportes',
                     'latitud' => -34.89455,
                     'longitud' => -56.1528,
-                    'imagen' => [
-                        'nombre' => 'football.jpg',
-                        'ruta'   => 'imagenes/football.jpg',
-                    ],
+                    'imagen' => ['nombre' => 'football.jpg', 'ruta' => 'imagenes/football.jpg'],
                 ],
                 [
                     'titulo' => 'Muestra de Arte',
@@ -76,10 +61,7 @@ class EventosDefaultSeeder extends Seeder
                     'categoria' => 'Exposiciones',
                     'latitud' => -34.90597,
                     'longitud' => -56.19417,
-                    'imagen' => [
-                        'nombre' => 'muestraArte.jpg',
-                        'ruta'   => 'imagenes/muestraArte.jpg',
-                    ],
+                    'imagen' => ['nombre' => 'muestraArte.jpg', 'ruta' => 'imagenes/muestraArte.jpg'],
                 ],
             ];
 
@@ -87,42 +69,102 @@ class EventosDefaultSeeder extends Seeder
 
             foreach ($eventosDefault as $data) {
                 try {
-                    // CREAR evento
-                    $evento = Evento::create([
-                        'titulo' => $data['titulo'],
-                        'descripcion' => $data['descripcion'],
-                        'organizador_id' => $organizador->id,
-                        'latitud' => $data['latitud'],
-                        'longitud' => $data['longitud'],
+                    $this->command->info("🎯 Creando evento via procedimiento: {$data['titulo']}");
+
+                    // 🐛 DEBUG: mostrar parámetros que se enviarán al procedimiento
+                    $fechaHora = Carbon::now()->addDays(7)->setTime(20, 0, 0);
+                    $this->command->info("🔍 PARÁMETROS DEBUG:");
+                    $this->command->info("   - Título: {$data['titulo']}");
+                    $this->command->info("   - Descripción: " . substr($data['descripcion'], 0, 50) . '...');
+                    $this->command->info("   - Fecha/Hora: {$fechaHora}");
+                    $this->command->info("   - Latitud: {$data['latitud']}");
+                    $this->command->info("   - Longitud: {$data['longitud']}");
+                    $this->command->info("   - Organizador ID: {$organizador->id}");
+
+                    // ✅ USAR EL PROCEDIMIENTO ALMACENADO crear_evento
+                    DB::statement('CALL crear_evento(?, ?, ?, ?, ?, ?)', [
+                        $data['titulo'],
+                        $data['descripcion'],
+                        $fechaHora, // fecha_hora
+                        $data['latitud'],
+                        $data['longitud'],
+                        $organizador->id
                     ]);
+
+                    // 🐛 DEBUG: verificar si el evento se creó en la BD
+                    $eventoReciente = DB::table('eventos')
+                        ->where('organizador_id', $organizador->id)
+                        ->where('titulo', $data['titulo'])
+                        ->orderBy('id', 'desc')
+                        ->first();
+
+                    if ($eventoReciente) {
+                        $this->command->info("✅ Evento encontrado en BD - ID: {$eventoReciente->id}");
+
+                        // 🐛 DEBUG: verificar si la fecha_hora también se creó
+                        $fechaCreada = DB::table('fechas_horas')
+                            ->where('evento_id', $eventoReciente->id)
+                            ->first();
+
+                        if ($fechaCreada) {
+                            $this->command->info("✅ Fecha/Hora creada en BD: {$fechaCreada->fecha_hora}");
+                        } else {
+                            $this->command->warn("⚠️ Fecha/Hora NO se creó en fechas_horas");
+                        }
+                    } else {
+                        $this->command->error("❌ Evento NO se encontró en la tabla eventos");
+                        continue;
+                    }
+
+                    // ✅ Obtener el ID del último evento insertado
+                    $eventoId = DB::getPdo()->lastInsertId();
+                    $this->command->info("🔍 lastInsertId() retornó: " . ($eventoId ?: 'NULL'));
+
+                    // Si lastInsertId() no funciona, usar el ID del evento encontrado
+                    if (!$eventoId) {
+                        $eventoId = $eventoReciente->id;
+                        $this->command->info("🔍 Usando ID alternativo: {$eventoId}");
+                    }
+
+                    $this->command->info("✅ Evento creado via procedimiento - ID: {$eventoId}");
+
+                    // ✅ Crear imagen asociada
+                    try {
+                        Imagen::create([
+                            'evento_id' => $eventoId,
+                            'nombre' => $data['imagen']['nombre'],
+                            'ruta' => $data['imagen']['ruta'],
+                        ]);
+                        $this->command->info("✅ Imagen creada correctamente");
+                    } catch (\Exception $e) {
+                        $this->command->error("❌ Error creando imagen: " . $e->getMessage());
+                    }
+
+                    // ✅ Asociar categoría
+                    try {
+                        $categoria = Categoria::firstOrCreate(['nombre' => $data['categoria']]);
+                        DB::table('categoria_evento')->insert([
+                            'evento_id' => $eventoId,
+                            'categoria_id' => $categoria->id,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                        $this->command->info("✅ Categoría asociada: {$categoria->nombre}");
+                    } catch (\Exception $e) {
+                        $this->command->error("❌ Error asociando categoría: " . $e->getMessage());
+                    }
 
                     $eventosCreados++;
-
-                    // CREAR imagen asociada
-                    Imagen::create([
-                        'evento_id' => $evento->id,
-                        'nombre' => $data['imagen']['nombre'],
-                        'ruta'   => $data['imagen']['ruta'],
-                    ]);
-
-                    // CREAR fecha por defecto
-                    FechaHora::create([
-                        'evento_id' => $evento->id,
-                        'fecha_hora' => Carbon::now()->addDays(7)->setTime(20, 0, 0),
-                    ]);
-
-                    // ASOCIAR categoría
-                    $categoria = Categoria::firstOrCreate(['nombre' => $data['categoria']]);
-                    $evento->categorias()->syncWithoutDetaching([$categoria->id]);
-
-                    $this->command->info("✅ Evento creado: ID {$evento->id} - {$evento->titulo}");
+                    $this->command->info("✅ Completado: {$data['titulo']}");
+                    $this->command->info("----------------------------------------");
 
                 } catch (\Exception $e) {
-                    $this->command->error("❌ Error creando evento: " . $e->getMessage());
+                    $this->command->error("❌ Error creando evento '{$data['titulo']}': " . $e->getMessage());
+                    $this->command->error("🔍 Stack trace: " . $e->getTraceAsString());
                 }
             }
 
-            $this->command->info("🎉 EventosDefaultSeeder completado. Eventos creados: {$eventosCreados}");
+            $this->command->info("🎉 Eventos creados via procedimiento: {$eventosCreados}");
 
         } catch (\Exception $e) {
             $this->command->error('💥 ERROR: ' . $e->getMessage());
