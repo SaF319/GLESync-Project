@@ -22,6 +22,10 @@ class EventosDefaultSeeder extends Seeder
             [
                 'nombre' => 'Organizador Planazo',
                 'password' => Hash::make('12345678'),
+                'es_root' => false,
+                'baneado' => false,
+                'motivo_baneo' => null,
+                'baneado_hasta' => null,
             ]
         );
 

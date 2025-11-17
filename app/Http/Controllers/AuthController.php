@@ -20,7 +20,7 @@ class AuthController extends Controller
             'email.email' => 'Ingrese un correo válido',
             'password.required' => 'Ingrese su contraseña',
         ]);
-        
+
         $auth = AuthManagerSingleton::getInstance();
         $usuario = $auth->login($request->email, $request->password);
 
@@ -35,6 +35,14 @@ class AuthController extends Controller
 
         Auth::login($usuario);
         $request->session()->regenerate();
+
+        // === ✔️ AGREGADO: si es root redirigir al panel de root ===
+        if ($usuario->es_root) {
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Bienvenido ROOT: ' . $usuario->nombre);
+        }
+
+        // === Resto queda igual ===
         return redirect()->route('dashboard')->with('success', 'Bienvenido ' . $usuario->nombre);
     }
 

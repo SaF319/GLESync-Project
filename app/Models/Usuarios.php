@@ -13,19 +13,28 @@ class Usuarios extends Authenticatable
     protected $table = 'usuarios';
 
     protected $fillable = [
-    'nombre',
-    'email',
-    'google_id',
-    'password',
-    'google2fa_secret',
-    'is_2fa_enabled',
-    ];
+        'nombre',
+        'email',
+        'google_id',
+        'password',
+        'google2fa_secret',
+        'is_2fa_enabled',
 
+        // === NUEVOS CAMPOS === //
+        'es_root',
+        'baneado',
+        'motivo_baneo',
+        'baneado_hasta',
+    ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    // ============================
+    //        RELACIONES
+    // ============================
 
     public function organizador()
     {
@@ -50,5 +59,37 @@ class Usuarios extends Authenticatable
     public function preferencias()
     {
         return $this->hasMany(Preferencia::class, 'usuario_id');
+    }
+
+    // ============================
+    //   MÉTODOS DEL USUARIO ROOT
+    // ============================
+
+    // ¿Es root?
+    public function esRoot()
+    {
+        return $this->es_root === 1;
+    }
+
+    // ¿Está baneado?
+    public function estaBaneado()
+    {
+        return $this->baneado === 1;
+    }
+
+    // ¿El baneo está activo?
+    public function baneoActivo()
+    {
+        if (!$this->estaBaneado()) {
+            return false;
+        }
+
+        // Si hay fecha de vencimiento del baneo
+        if ($this->baneado_hasta && now()->lt($this->baneado_hasta)) {
+            return true;
+        }
+
+        // Si baneado = 1 y no tiene fecha → baneo permanente
+        return $this->baneado === 1;
     }
 }
