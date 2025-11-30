@@ -7,6 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Si el entorno es testing (SQLite), NO crear el procedimiento
+        if (app()->environment('testing')) {
+            return;
+        }
+
         DB::unprepared('DROP PROCEDURE IF EXISTS crear_evento');
 
         DB::unprepared('
@@ -16,7 +21,7 @@ return new class extends Migration
                 IN p_fechaHora DATETIME,
                 IN p_latitud DECIMAL(10, 7),
                 IN p_longitud DECIMAL(10, 7),
-                IN p_organizador_id BIGINT  -- ✅ CORREGIDO
+                IN p_organizador_id BIGINT
             )
             BEGIN
                 INSERT INTO eventos (titulo, latitud, longitud, descripcion, organizador_id, created_at, updated_at)
@@ -32,6 +37,11 @@ return new class extends Migration
 
     public function down(): void
     {
+        // Tampoco ejecutar DROP PROCEDURE en testing
+        if (app()->environment('testing')) {
+            return;
+        }
+
         DB::unprepared('DROP PROCEDURE IF EXISTS crear_evento');
     }
 };
